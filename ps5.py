@@ -95,14 +95,52 @@ class WordTrigger(Trigger):
 	def is_word_in(self, text):
 		word_lower = self.word.lower()
 		text_lower = text.lower()
+		for char in string.punctuation:
+			text_lower = text_lower.replace(char, " ")
+		text_lower = text_lower.split()	
 		if word_lower in text_lower:
 			return True
 		else:
 			return False	
 
 # TODO: TitleTrigger
+class TitleTrigger(WordTrigger):
+	
+	def __init__(self, word):
+		WordTrigger.__init__(self, word)
+		
+	def evaluate(self, story):
+		assert isinstance(story, NewsStory)
+		if self.is_word_in(story.get_title()):
+			return True
+		else:
+			return False
 # TODO: SubjectTrigger
+class SubjectTrigger(WordTrigger):
+	
+	def __init__(self, word):
+		WordTrigger.__init__(self, word)
+		
+	def evaluate(self, story):
+		assert isinstance(story, NewsStory)
+		if self.is_word_in(story.get_subject()):
+			return True
+		else:
+			return False
+
+	
 # TODO: SummaryTrigger
+class SummaryTrigger(WordTrigger):
+	
+	def __init__(self, word):
+		WordTrigger.__init__(self, word)
+		
+	def evaluate(self, story):
+		assert isinstance(story, NewsStory)
+		if self.is_word_in(story.get_summary()):
+			return True
+		else:
+			return False
 
 
 # Composite Triggers
