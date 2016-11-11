@@ -86,6 +86,19 @@ class Trigger(object):
 # Problems 2-5
 
 # TODO: WordTrigger
+class WordTrigger(Trigger):
+	
+	def __init__(self, word):
+		#Trigger.__init__
+		self.word = word
+		
+	def is_word_in(self, text):
+		word_lower = self.word.lower()
+		text_lower = text.lower()
+		if word_lower in text_lower:
+			return True
+		else:
+			return False	
 
 # TODO: TitleTrigger
 # TODO: SubjectTrigger
