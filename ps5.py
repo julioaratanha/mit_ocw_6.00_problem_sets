@@ -158,10 +158,41 @@ class NotTrigger(Trigger):
     def evaluate(self, story):
         return not self._trigger.evaluate(story)
 # TODO: AndTrigger
+class AndTrigger(Trigger):
+
+    def __init__(self, trigger1, trigger2):
+        self._trigger1 = trigger1
+        self._trigger2 = trigger2
+        
+    def evaluate(self, story):
+        return self._trigger1.evaluate(story) and self._trigger2.evaluate(story)
 # TODO: OrTrigger
+class OrTrigger(Trigger):
+
+    def __init__(self, trigger1, trigger2):
+        self._trigger1 = trigger1
+        self._trigger2 = trigger2
+        
+    def evaluate(self, story):
+        return self._trigger1.evaluate(story) or self._trigger2.evaluate(story)
 
 
 # Phrase Trigger
+class PhraseTrigger(Trigger):
+
+    def __init__(self, phrase):
+        self.phrase = phrase
+
+    def evaluate(self, story):
+        assert isinstance(story, NewsStory)
+        if self.phrase in story.get_subject():
+            return True
+        elif self.phrase in story.get_title():
+            return True
+        elif self.phrase in story.get_summary():
+            return True
+        else:
+            return False
 # Question 9
 
 # TODO: PhraseTrigger
