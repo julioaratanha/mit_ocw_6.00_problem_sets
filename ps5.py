@@ -47,28 +47,28 @@ def process(url):
 
 # TODO: NewsStory
 class NewsStory(object):
-	
-	def __init__(self, guid, title, subject, summary, link):
-		self.guid = guid
-		self.title = title
-		self.subject = subject
-		self.summary = summary
-		self.link = link
-		
-	def get_guid(self):
-		return self.guid
-	
-        def get_title(self):
-		return self.title
-	
-	def get_subject(self):
-		return self.subject
-	
-	def get_summary(self):
-		return self.summary
-	
-	def get_link(self):
-		return self.link
+    
+    def __init__(self, guid, title, subject, summary, link):
+        self.guid = guid
+        self.title = title
+        self.subject = subject
+        self.summary = summary
+        self.link = link
+        
+    def get_guid(self):
+        return self.guid
+    
+    def get_title(self):
+        return self.title
+                
+    def get_subject(self):
+        return self.subject
+    
+    def get_summary(self):
+        return self.summary
+    
+    def get_link(self):
+        return self.link
 #======================
 # Part 2
 # Triggers
@@ -87,66 +87,76 @@ class Trigger(object):
 
 # TODO: WordTrigger
 class WordTrigger(Trigger):
-	
-	def __init__(self, word):
-		#Trigger.__init__
-		self.word = word
-		
-	def is_word_in(self, text):
-		word_lower = self.word.lower()
-		text_lower = text.lower()
-		for char in string.punctuation:
-			text_lower = text_lower.replace(char, " ")
-		text_lower = text_lower.split()	
-		if word_lower in text_lower:
-			return True
-		else:
-			return False	
+    
+    def __init__(self, word):
+        #Trigger.__init__
+        self.word = word
+        
+    def is_word_in(self, text):
+        word_lower = self.word.lower()
+        text_lower = text.lower()
+        for char in string.punctuation:
+            text_lower = text_lower.replace(char, " ")
+        text_lower = text_lower.split() 
+        if word_lower in text_lower:
+            return True
+        else:
+            return False    
 
 # TODO: TitleTrigger
 class TitleTrigger(WordTrigger):
-	
-	def __init__(self, word):
-		WordTrigger.__init__(self, word)
-		
-	def evaluate(self, story):
-		assert isinstance(story, NewsStory)
-		if self.is_word_in(story.get_title()):
-			return True
-		else:
-			return False
+    
+    def __init__(self, word):
+        WordTrigger.__init__(self, word)
+        
+    def evaluate(self, story):
+        assert isinstance(story, NewsStory)
+        if self.is_word_in(story.get_title()):
+            return True
+        else:
+            return False
 # TODO: SubjectTrigger
 class SubjectTrigger(WordTrigger):
-	
-	def __init__(self, word):
-		WordTrigger.__init__(self, word)
-		
-	def evaluate(self, story):
-		assert isinstance(story, NewsStory)
-		if self.is_word_in(story.get_subject()):
-			return True
-		else:
-			return False
-
-	
+    
+    def __init__(self, word):
+        WordTrigger.__init__(self, word)
+        
+    def evaluate(self, story):
+        assert isinstance(story, NewsStory)
+        if self.is_word_in(story.get_subject()):
+            return True
+        else:
+            return False
+##x = SubjectTrigger("asdas")
+##print type(x)
+##assert isinstance(x, SummaryTrigger)
+    
 # TODO: SummaryTrigger
 class SummaryTrigger(WordTrigger):
-	
-	def __init__(self, word):
-		WordTrigger.__init__(self, word)
-		
-	def evaluate(self, story):
-		assert isinstance(story, NewsStory)
-		if self.is_word_in(story.get_summary()):
-			return True
-		else:
-			return False
+    
+    def __init__(self, word):
+        WordTrigger.__init__(self, word)
+        
+    def evaluate(self, story):
+        assert isinstance(story, NewsStory)
+        if self.is_word_in(story.get_summary()):
+            return True
+        else:
+            return False
 
 
 # Composite Triggers
 # Problems 6-8
 
 # TODO: NotTrigger
+class NotTrigger(Trigger):
+
+    def __init__(self, trigger):
+        #assert isinstance(trigger, Trigger)
+        self._trigger = trigger
+        
+    def evaluate(self, story):
+        return not self._trigger.evaluate(story)
 # TODO: AndTrigger
 # TODO: OrTrigger
 
