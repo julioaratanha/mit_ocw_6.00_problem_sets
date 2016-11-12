@@ -212,7 +212,12 @@ def filter_stories(stories, triggerlist):
     # TODO: Problem 10
     # This is a placeholder (we're just returning all the stories, with no filtering) 
     # Feel free to change this line!
-    return stories
+    filtered_stories = []
+    for trigger in triggerlist:
+        for story in stories:
+            if trigger.evaluate(story):
+                filtered_stories.append(story)
+    return filtered_stories
 
 #======================
 # Part 4
@@ -235,7 +240,30 @@ def readTriggerConfig(filename):
         if len(line) == 0 or line[0] == '#':
             continue
         lines.append(line)
-
+    triggers_dic = dict()
+    triggers=[]
+    for line in lines:
+        line_list = line.split()
+        if line_list[0] != "ADD":
+            if line_list[1] == "TITLE":
+                triggers_dic[line_list[0]] = TitleTrigger(line_list[2])
+            elif line_list[1] == "SUBJECT":
+                triggers_dic[line_list[0]] = SubjectTrigger(line_list[2])    
+            elif line_list[1] == "SUMMARY":
+                triggers_dic[line_list[0]] = SummaryTrigger(line_list[2])
+            elif line_list[1] == "NOT":
+                triggers_dic[line_list[0]] = NotTrigger(triggers_dic[line_list[2]])
+            elif line_list[1] == "AND":
+                triggers_dic[line_list[0]] = AndTrigger(triggers_dic[line_list[2]], triggers_dic[line_list[3]])
+            elif line_list[1] == "OR":
+                triggers_dic[line_list[0]] = OrTrigger(triggers_dic[line_list[2]], triggers_dic[line_list[3]])    
+            elif line_list[1] == "PHRASE":
+                phrase = " ".join(line_list[2:])
+                triggers_dic[line_list[0]] = PhraseTrigger(phrase)
+        else:
+            for trigger in line_list[1:]:
+                triggers.append(triggers_dic[trigger])
+    return triggers                
     # TODO: Problem 11
     # 'lines' has a list of lines you need to parse
     # Build a set of triggers from it and
@@ -246,15 +274,15 @@ import thread
 def main_thread(p):
     # A sample trigger list - you'll replace
     # this with something more configurable in Problem 11
-    t1 = SubjectTrigger("Obama")
-    t2 = SummaryTrigger("MIT")
-    t3 = PhraseTrigger("Supreme Court")
-    t4 = OrTrigger(t2, t3)
-    triggerlist = [t1, t4]
+##    t1 = TitleTrigger("Trump")
+##    t2 = SummaryTrigger("MIT")
+##    t3 = PhraseTrigger("Supreme Court")
+##    t4 = OrTrigger(t2, t3)
+##    triggerlist = [t1, t4]
     
     # TODO: Problem 11
     # After implementing readTriggerConfig, uncomment this line 
-    #triggerlist = readTriggerConfig("triggers.txt")
+    triggerlist = readTriggerConfig("triggers.txt")
 
     guidShown = []
     
@@ -265,6 +293,12 @@ def main_thread(p):
         stories = process("http://news.google.com/?output=rss")
         # Get stories from Yahoo's Top Stories RSS news feed
         stories.extend(process("http://rss.news.yahoo.com/rss/topstories"))
+        # Get stories from UOL Tenis feed
+        #stories.extend(process("http://esporte.uol.com.br/tenis/ultimas/index.xml"))
+        # Get stories from CNN Americas
+        stories.extend(process("http://rss.cnn.com/rss/edition_americas.rss"))
+        
+        
 
         # Only select stories we're interested in
         stories = filter_stories(stories, triggerlist)
